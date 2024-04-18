@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Calificaciones</title>
+</head>
+<body>
+    <h1>Consulta de Calificaciones</h1>
+    <form id="consultaForm">
+        <label for="userId">ID del usuario:</label>
+        <input type="text" id="userId" name="userId" required>
+        <button type="button" onclick="enviarPeticion()">Consultar Calificaciones</button>
+    </form>
+
+    <script>
+       function enviarPeticion() {
+    var request = new XMLHttpRequest();
+    var url = "http://localhost/webservice/rest/server.php";
+    
+    // Construir los parámetros de la URL
+    var parametros = [];
+    parametros.push("wstoken=a7ab7c13eca9c4d87556998dff78a606");
+    parametros.push("wsfunction=gradereport_user_get_grades_table");
+    parametros.push("courseid=2");
+    parametros.push("moodlewsrestformat=json");
+    parametros.push("userid=" + encodeURIComponent(document.getElementById("userId").value));
+    parametros.push("groupid=0");
+
+    // Combinar todos los parámetros en la URL
+    url += "?" + parametros.join("&");
+
+    request.open("GET", url, true);
+
+    request.onreadystatechange = function () {
+        if (request.readyState === 4) {
+            if (request.status === 200) {
+                // La solicitud fue exitosa
+                console.log("Solicitud exitosa!");
+                console.log(request.responseText);
+                // Aquí puedes agregar cualquier lógica adicional después de que se complete la solicitud
+            } else {
+                // Manejo de errores en caso de que la solicitud no sea exitosa
+                console.error("Error en la solicitud: ", request.statusText);
+                // Aquí puedes agregar cualquier lógica adicional para manejar el error
+            }
+        }
+    };
+
+    request.onerror = function () {
+        // Manejo de errores en caso de que la solicitud falle
+        console.error("Error al enviar la solicitud");
+        // Aquí puedes agregar cualquier lógica adicional para manejar el error
+    };
+
+    request.send();
+}
+    </script>
+</body>
+</html>
