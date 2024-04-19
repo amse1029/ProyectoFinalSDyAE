@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="stylesheet" href="styles/calificaciones.css">
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Consulta de Calificaciones</title>
@@ -13,49 +15,24 @@
             <button type="button" onclick="enviarPeticion()">Consultar Calificaciones</button>
         </form>
 
-        <script>
-            function enviarPeticion() {
-            var request = new XMLHttpRequest();
-            var url = "http://localhost/webservice/rest/server.php";
-            // Construir los parámetros de la URL
-            var parametros = [];
-            parametros.push("wstoken=b5905aee33fbbe8a2cb3f613bcec7bbf");
-            parametros.push("wsfunction=core_enrol_get_users_courses");
-            // parametros.push("courseid=2");
-            parametros.push("moodlewsrestformat=json");
-            parametros.push("userid=" + encodeURIComponent(document.getElementById("userId").value));
-            //parametros.push("groupid=0");
+        <script src="js/cargarCalif.js"> </script>
 
-            // Combinar todos los parámetros en la URL
-            url += "?" + parametros.join("&");
-            request.open("GET", url, true);
-            request.onreadystatechange = function () {
-            if (request.readyState === 4) {
-            if (request.status === 200) {
-            // La solicitud fue exitosa
-            console.log("Solicitud exitosa!");
-            console.log(request.responseText);
-            var cursos = JSON.parse(request.responseText);
-            cursos.forEach(curso => {
-            console.log("ID del curso:", curso.id);
-            console.log("Nombre completo del curso:", curso.fullname);
-             });
-            // cons calAlumno = JSON.parse(request.responseText);
-            // Aquí puedes agregar cualquier lógica adicional después de que se complete la solicitud
-            } else {
-            // Manejo de errores en caso de que la solicitud no sea exitosa
-            console.error("Error en la solicitud: ", request.statusText);
-            // Aquí puedes agregar cualquier lógica adicional para manejar el error
-            }
-            }
-            };
-            request.onerror = function () {
-            // Manejo de errores en caso de que la solicitud falle
-            console.error("Error al enviar la solicitud");
-            // Aquí puedes agregar cualquier lógica adicional para manejar el error
-            };
-            request.send();
-            }
-        </script>
+
+
+        <table id="tablaCursos">
+            <thead>
+                <tr>
+                    <th>Nombre Curso</th>
+                    <th>Nombre Alumno</th>
+                    <th>Nombre Maestro</th>
+                    <th>Id Curso</th>
+                    <th>Id Alumno</th>
+                    <th>Id Maestro</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
     </body>
 </html>
