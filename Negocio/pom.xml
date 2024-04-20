@@ -2,46 +2,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
-    <artifactId>ControlEscolar</artifactId>
+    <artifactId>Negocio</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>com.mycompany.controlescolar.ControlEscolar</exec.mainClass>
+        <exec.mainClass>com.mycompany.negocio.Negocio</exec.mainClass>
     </properties>
+    
     <dependencies>
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>4.0.0-M1</version>
+            <groupId>com.mycompany</groupId>
+            <artifactId>ControlEscolar</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
-   
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-    
+        
         <dependency>
             <groupId>com.mycompany</groupId>
             <artifactId>DominioBroker</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-    
-        <dependency>
+        
+         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20210307</version> <!-- O la versión más reciente disponible -->
         </dependency>
         
-        <dependency>
-            <groupId>com.mycompany</groupId>
-            <artifactId>Negocio</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
     </dependencies>
-
+    
 </project>
