@@ -32,7 +32,7 @@ public ArrayList<Calificacion> getCalificaciones(ArrayList<Curso> cursos) {
             return null; // Otra opción sería devolver una lista vacía o algún otro valor predeterminado
         }
     }
-    //e we para enviar los datos ala api del chui pueden ahcerun metodo en control y en accesoa datos llamado enviar calificaciones y ahi se conectan ala api
+
 
     public void enviarCalificaciones(ArrayList<Calificacion> calificaciones) throws ProtocolException, IOException{
     ResourceCalificacion resource = new ResourceCalificacion();

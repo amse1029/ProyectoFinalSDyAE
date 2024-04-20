@@ -27,7 +27,11 @@ public class FachadaNegocio implements INegocio{
        return cal.getCalificaciones(cursos);
     }
     
-
+    @Override
+    public ArrayList<Alumno> getAlumnos() {
+        CtrlAlumno alumno= new CtrlAlumno();
+       return alumno.getAlumnos();
+    }
 
     @Override
     public ArrayList<Maestro> getMaestros() {

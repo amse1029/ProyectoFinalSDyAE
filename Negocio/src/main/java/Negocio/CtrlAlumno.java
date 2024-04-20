@@ -13,5 +13,8 @@ import java.util.ArrayList;
  * @author DELL
  */
 public class CtrlAlumno {
-    
+      public ArrayList<Alumno> getAlumnos(){
+        FachadaDatos fachadaDatos = FabricaDatos.getFachadaDatos();
+        return fachadaDatos.getAlumnos();
+    }
 }
