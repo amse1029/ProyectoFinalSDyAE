@@ -5,7 +5,7 @@ function enviarPeticion() {
     var tbody = document.getElementById('tablaCursos');
     // Construir los parámetros de la URL
     var parametros = [];
-    parametros.push("wstoken=a7ab7c13eca9c4d87556998dff78a606");
+    parametros.push("wstoken=b5905aee33fbbe8a2cb3f613bcec7bbf");
     parametros.push("wsfunction=core_enrol_get_users_courses");
     // parametros.push("courseid=2");
     parametros.push("moodlewsrestformat=json");
@@ -62,7 +62,7 @@ function buscarInfoCursos(cursoId, filaTabla) {
     var url = "http://localhost/webservice/rest/server.php";
     var params = [];
 
-    params.push("wstoken=a7ab7c13eca9c4d87556998dff78a606");
+    params.push("wstoken=b5905aee33fbbe8a2cb3f613bcec7bbf");
     params.push("wsfunction=core_enrol_get_enrolled_users");
     params.push("courseid=" + cursoId);
     params.push("moodlewsrestformat=json");
