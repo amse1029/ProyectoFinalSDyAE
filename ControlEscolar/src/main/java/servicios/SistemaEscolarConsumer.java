@@ -20,7 +20,7 @@ import java.net.URL;
 public class SistemaEscolarConsumer {
     private WebTarget webTarget;
     private Client client;
-    public static final String BASE_URI = "http://localhost:8080/APIREGISTROESCOLAR/webresources/persistencia.calificacion";
+    public static final String BASE_URI = "..."; //se debe agreagar la api para acceder a control escolar
 
     public SistemaEscolarConsumer() {
         client = jakarta.ws.rs.client.ClientBuilder.newClient();
@@ -32,7 +32,7 @@ public class SistemaEscolarConsumer {
         webTarget.request(jakarta.ws.rs.core.MediaType.APPLICATION_JSON).post(jakarta.ws.rs.client.Entity.entity(requestEntity, jakarta.ws.rs.core.MediaType.APPLICATION_JSON));
                 System.out.println(webTarget.request(jakarta.ws.rs.core.MediaType.APPLICATION_JSON).post(jakarta.ws.rs.client.Entity.entity(requestEntity, jakarta.ws.rs.core.MediaType.APPLICATION_JSON)).getStatus());
 
-        System.out.println("cocainiiiiii");
+        System.out.println("prueba pasada");
     }
     
     
