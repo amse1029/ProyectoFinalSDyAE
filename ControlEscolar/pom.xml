@@ -11,37 +11,25 @@
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>com.mycompany.controlescolar.ControlEscolar</exec.mainClass>
     </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>4.0.0-M1</version>
-        </dependency>
-   
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-    
-        <dependency>
-            <groupId>com.mycompany</groupId>
-            <artifactId>DominioBroker</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20210307</version> <!-- O la versión más reciente disponible -->
-        </dependency>
-        
-        <dependency>
-            <groupId>com.mycompany</groupId>
-            <artifactId>Negocio</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <groupId>org.glassfish.jersey.core</groupId>
+        <artifactId>jersey-client</artifactId>
+        <version>3.0.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>jakarta.ws.rs</groupId>
+        <artifactId>jakarta.ws.rs-api</artifactId>
+        <version>3.0.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20210307</version>
+    </dependency>
 
     </dependencies>
-
 </project>

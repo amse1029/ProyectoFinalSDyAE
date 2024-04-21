@@ -5,24 +5,16 @@
 package Negocio;
 import Datos.FabricaDatos;
 import Datos.FachadaDatos;
+import dominiobroker.Alumno;
 import dominiobroker.Curso;
 import java.util.ArrayList;
-
-
 /**
  *
  * @author DELL
  */
-public class CtrlCurso {
-        
-    public ArrayList<Curso> getCursos(){
+public class CtrlAlumno {
+      public ArrayList<Alumno> getAlumnos(){
         FachadaDatos fachadaDatos = FabricaDatos.getFachadaDatos();
-        
-        
-        return fachadaDatos.getCursos();
-    }
-    public Curso getCursoById(Integer id){
-        FachadaDatos fachadaDatos = FabricaDatos.getFachadaDatos();
-        return fachadaDatos.getCursoById(id);
+        return fachadaDatos.getAlumnos();
     }
 }

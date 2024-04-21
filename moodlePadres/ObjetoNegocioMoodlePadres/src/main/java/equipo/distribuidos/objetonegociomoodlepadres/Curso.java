@@ -5,6 +5,7 @@
 package equipo.distribuidos.objetonegociomoodlepadres;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,6 +64,10 @@ public class Curso implements Serializable {
         this.nombreCurso = nombreCurso;
         this.nombreMaestro = nombreMaestro;
         this.alumnos = cursosAlumno;
+    }
+
+    public Curso(ArrayList<Maestro> maestros, String string, String string0, int aInt) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 

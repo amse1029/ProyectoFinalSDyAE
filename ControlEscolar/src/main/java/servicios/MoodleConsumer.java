@@ -16,7 +16,7 @@ import jakarta.ws.rs.core.MediaType;
 public class MoodleConsumer {
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/webservice/rest";
+    private static final String BASE_URI = "http://localhost:8080/webservice/rest/";
 
     public MoodleConsumer() {
         client = jakarta.ws.rs.client.ClientBuilder.newClient();
@@ -63,6 +63,9 @@ public class MoodleConsumer {
             return response;
     }
     
+    //obtener maestros paa saber si las calificaciones que no estan subidas se debe poner en
+    //la lista negra 
+    //agarrar los maestros de esos cursos y meterlos en la lista 
     
     public void close() {
         client.close();

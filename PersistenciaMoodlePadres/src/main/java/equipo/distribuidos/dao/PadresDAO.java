@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package equipo.distribuidos.dao;
-
 import equipo.distribuidos.conexion.ConexionBD;
 import equipo.distribuidos.interfaces.IConexionBD;
 import equipo.distribuidos.interfaces.IPadresDAO;
