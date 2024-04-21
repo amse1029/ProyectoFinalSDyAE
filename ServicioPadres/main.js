@@ -14,7 +14,7 @@ app.get('/api/otra-api', async (req, res) => {
     //var tbody = document.getElementById('tablaCursos');
     // Construir los parámetros de la URL
     var parametros = [];
-    parametros.push("wstoken=a7ab7c13eca9c4d87556998dff78a606");
+    parametros.push("wstoken=b5905aee33fbbe8a2cb3f613bcec7bbf");
     parametros.push("wsfunction=gradereport_user_get_grades_table");
     // parametros.push("courseid=2");
     parametros.push("moodlewsrestformat=json");
