@@ -28,14 +28,13 @@ function consultarAlumno() {
 }
 
 function consultarCursos() {
-    hacerSolicitud('/consultar-cursos');
+    hacerSolicitud('/api/consultar-cursos?userId=2');
 }
 
 function consultarProfesorCurso() {
-    hacerSolicitud('/consultar-profesor-curso');
+    hacerSolicitud('/api/consultar-profesor-curso?courseId=2');
 }
 
 function consultarCalificaciones() {
-    hacerSolicitud('/consultar-calificaciones');
+    hacerSolicitud('/api/consultar-calificaciones-curso?courseId=2&userId=4');
 }
-        

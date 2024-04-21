@@ -115,5 +115,4 @@ function buscarInfoCursos(cursoId, filaTabla) {
 
     request.send();
 
-
 }
