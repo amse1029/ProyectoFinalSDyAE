@@ -134,3 +134,131 @@ app.all('*', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor API Gateway escuchando en el puerto ${PORT}`);
 });
+
+
+
+
+//esta es la parte de control escolar 
+
+// Función para obtener el maestro que asignó las calificaciones
+async function obtenerMaestroCalificaciones(courseId) {
+    try {
+        const url = "http://localhost/webservice/rest/server.php";
+        const params = {
+            wstoken: 'a7ab7c13eca9c4d87556998dff78a606',
+            wsfunction: 'core_course_get_courses',
+            options: [
+                {
+                    name: 'ids',
+                    value: [courseId]
+                }
+            ],
+            moodlewsrestformat: 'json'
+        };
+        const response = await axios.get(url, { params });
+        const courseInfo = response.data[0];
+        const maestroId = courseInfo['teacher'];
+        return maestroId;
+    } catch (error) {
+        console.error("Error al obtener el maestro que asignó las calificaciones:", error);
+        throw new Error("Error al obtener el maestro que asignó las calificaciones");
+    }
+}
+
+
+// Función para verificar si un maestro ha asignado calificaciones en un curso
+async function haAsignadoCalificaciones(maestroId, courseId) {
+    try {
+        const response = await axios.get(`http://localhost/api/consultar-calificaciones-curso?userId=${maestroId}&courseId=${courseId}`);
+        const calificaciones = response.data;
+        return calificaciones.length > 0;
+    } catch (error) {
+        console.error("Error al verificar si el maestro ha asignado calificaciones:", error);
+        throw new Error("Error al verificar si el maestro ha asignado calificaciones");
+    }
+}
+
+
+
+async function obtenerMaestrosSinCalificacion(courseId) {
+    try {
+        // Realizar la solicitud para obtener la lista de maestros del curso
+        const response = await axios.get(`http://localhost/api/consultar-profesor-curso?courseId=${courseId}`);
+        const maestros = response.data;
+        const maestrosSinCalificacion = maestros.filter(async maestro => {
+            const haAsignado = await haAsignadoCalificaciones(maestro.id, courseId);
+            return !haAsignado;
+        });
+        return maestrosSinCalificacion;
+    } catch (error) {
+        console.error("Error al obtener la lista de maestros sin calificación:", error);
+        throw new Error("Error al obtener la lista de maestros sin calificación");
+    }
+}
+
+
+
+
+// Función para obtener el promedio del alumno
+async function obtenerPromedioAlumno(userId, courseId) {
+    try {
+        const url = "http://localhost/webservice/rest/server.php";
+        const params = {
+            wstoken: 'a7ab7c13eca9c4d87556998dff78a606',
+            wsfunction: 'gradereport_user_get_grades_table',
+            moodlewsrestformat: 'json',
+            userid: userId,
+            courseid: courseId
+        };
+        const response = await axios.get(url, { params });
+        const grades = response.data.tables[0].tabledata;
+        let totalGrade = 0;
+        let totalWeight = 0;
+        grades.forEach(grade => {
+            totalGrade += parseFloat(grade.grade) * parseFloat(grade.weight);
+            totalWeight += parseFloat(grade.weight);
+        });
+        const average = totalGrade / totalWeight;
+        return average;
+    } catch (error) {
+        console.error("Error al obtener el promedio del alumno:", error);
+        throw new Error("Error al obtener el promedio del alumno");
+    }
+}
+
+// Ruta para obtener el maestro que asignó las calificaciones
+app.get('/api/obtener-maestro-calificaciones', async (req, res) => {
+    try {
+        const courseId = req.query.courseId;
+        const maestroCalificaciones = await obtenerMaestroCalificaciones(courseId);
+        res.json({ maestroCalificaciones: maestroCalificaciones });
+    } catch (error) {
+        console.error("Error al obtener el maestro que asignó las calificaciones:", error);
+        res.status(500).json({ error: 'Error al obtener el maestro que asignó las calificaciones' });
+    }
+});
+
+// Ruta para obtener la lista de maestros que no han asignado calificación
+app.get('/api/obtener-maestros-sin-calificacion', async (req, res) => {
+    try {
+        const courseId = req.query.courseId;
+        const maestrosSinCalificacion = await obtenerMaestrosSinCalificacion(courseId);
+        res.json({ maestrosSinCalificacion: maestrosSinCalificacion });
+    } catch (error) {
+        console.error("Error al obtener la lista de maestros sin calificación:", error);
+        res.status(500).json({ error: 'Error al obtener la lista de maestros sin calificación' });
+    }
+});
+
+// Ruta para obtener el promedio del alumno
+app.get('/api/obtener-promedio-alumno', async (req, res) => {
+    try {
+        const userId = req.query.userId;
+        const courseId = req.query.courseId;
+        const promedioAlumno = await obtenerPromedioAlumno(userId, courseId);
+        res.json({ promedioAlumno: promedioAlumno });
+    } catch (error) {
+        console.error("Error al obtener el promedio del alumno:", error);
+        res.status(500).json({ error: 'Error al obtener el promedio del alumno' });
+    }
+});

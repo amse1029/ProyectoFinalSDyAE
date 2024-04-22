@@ -38,3 +38,20 @@ function consultarProfesorCurso() {
 function consultarCalificaciones() {
     hacerSolicitud('/api/consultar-calificaciones-curso?courseId=2&userId=4');
 }
+
+
+//esto es para control escolar 
+function maestroConCalificar() {
+     fetch('/api/obtener-maestro-calificaciones')
+}
+
+
+function mestroSinCalificar() {
+     fetch('/api/obtener-maestros-sin-calificacion')
+}
+
+
+function promedioAlum() {
+     fetch('/api/obtener-promedio-alumno')
+}
+
