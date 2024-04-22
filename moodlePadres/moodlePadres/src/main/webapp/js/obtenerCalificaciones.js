@@ -96,6 +96,4 @@ function obtenerCalificacionPorCurso() {
         // Aquí puedes agregar cualquier lógica adicional para manejar el error
     };
     request.send();
-
-
 }

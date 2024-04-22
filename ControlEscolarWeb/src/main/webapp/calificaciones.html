@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,52 +9,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     <h1>Calificaciones por Curso</h1>
     <div id="resultados"></div>
 
-    <script src="obtenerCalificacionesCurso.js"></script>
-
+    <script src="js/obtenerCalificacionesCurso.js"></script>
+    <script src="js/mostrarResultadosCalificaciones.js"></script>
     <script>
-        // Agregar una función para mostrar los resultados
-        function mostrarResultados(calificacionesPorCurso) {
-            var resultadosDiv = document.getElementById("resultados");
-            resultadosDiv.innerHTML = ""; // Limpiar el contenido existente
-
-            // Iterar sobre las calificaciones por curso
-            calificacionesPorCurso.forEach(curso => {
-                // Crear un elemento div para cada curso
-                var cursoDiv = document.createElement("div");
-                cursoDiv.classList.add("curso");
-
-                // Agregar el nombre del curso como encabezado h2
-                var nombreCursoHeader = document.createElement("h2");
-                nombreCursoHeader.textContent = "Curso: " + curso.cursoNombre;
-                cursoDiv.appendChild(nombreCursoHeader);
-
-                // Agregar el promedio de calificaciones como un párrafo
-                var promedioCalificacionesParrafo = document.createElement("p");
-                promedioCalificacionesParrafo.textContent = "Promedio de Calificaciones: " + curso.promedioCalificaciones.toFixed(2);
-                cursoDiv.appendChild(promedioCalificacionesParrafo);
-
-                // Agregar la información del maestro como un párrafo
-                var maestroParrafo = document.createElement("p");
-                maestroParrafo.textContent = "Maestro: " + curso.maestro.maestroNombre;
-                cursoDiv.appendChild(maestroParrafo);
-
-                // Agregar las calificaciones de los alumnos como una lista desordenada
-                var calificacionesLista = document.createElement("ul");
-                curso.calificaciones.forEach(calificacion => {
-                    var calificacionItem = document.createElement("li");
-                    calificacionItem.textContent = calificacion.alumnoNombre + ": " + calificacion.calificacion;
-                    calificacionesLista.appendChild(calificacionItem);
-                });
-                cursoDiv.appendChild(calificacionesLista);
-
-                // Agregar el elemento div del curso al div de resultados
-                resultadosDiv.appendChild(cursoDiv);
-            });
-        }
-
         // Llamar a la función para obtener y mostrar las calificaciones por curso
         obtenerCalificacionPorCurso(mostrarResultados);
     </script>
 </body>
 </html>
-
