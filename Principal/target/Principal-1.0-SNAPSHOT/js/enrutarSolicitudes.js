@@ -103,7 +103,7 @@ function consultarCusosAlumnoYCargarAsignaciones() {
             console.log(idCurso);
 
             // Utilizar una función de cierre para capturar el valor correcto de idCurso
-            (function(idCurso) {
+            (function (idCurso) {
                 consultarTareasDeAlumnoEnCurso(idCurso).then(function (resultadoTareas) {
                     console.log(resultadoTareas['courses']);
                     var tareas = resultadoTareas['courses'][0];
@@ -141,6 +141,14 @@ function consultarCusosAlumnoYCargarAsignaciones() {
                         tareaIdFila.textContent = tareasIds[i];
                         fila.appendChild(tareaIdFila);
 
+                        var boton = document.createElement('button');
+                        boton.textContent = 'Avalar Tarea';
+                        boton.addEventListener('click', function () {
+                            console.log(tareaIdFila.textContent);
+                        });
+
+                        fila.appendChild(boton);
+
                         tbody.appendChild(fila);
                         i++;
                     });
@@ -148,4 +156,9 @@ function consultarCusosAlumnoYCargarAsignaciones() {
             })(idCurso);
         });
     });
+}
+
+
+function imprimirIdTarea(idTarea) {
+    console.log('ID de la tarea:', idTarea);
 }
