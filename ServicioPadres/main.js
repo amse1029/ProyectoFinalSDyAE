@@ -18,8 +18,8 @@ app.get('/api/otra-api', async (req, res) => {
         parametros.push("wsfunction=gradereport_user_get_grades_table");
         // parametros.push("courseid=2");
         parametros.push("moodlewsrestformat=json");
-        parametros.push("userid=" + encodeURIComponent(4));
-        parametros.push("courseid=" + encodeURIComponent(2));
+        parametros.push("userid=" + req.query.userId);
+        parametros.push("courseid=" + req.query.courseId);
         //parametros.push("groupid=0");
         // Combinar todos los parámetros en la URL
         url += "?" + parametros.join("&");
@@ -84,6 +84,29 @@ app.get('/api/consultar-profesor-curso', async (req, res) => {
                     // Filtrar los maestros y alumnos
                     const maestros = cursoInfo.filter(user => user.roles.some(role => role.shortname === 'editingteacher'));
                     res.json(maestros);
+                });
+    } catch (error) {
+        // Manejar errores
+        console.error("Error al enviar la solicitud:", error);
+        // Aquí puedes agregar cualquier lógica adicional para manejar el error
+    }
+});
+
+app.get('/api/consultar-tareas-alumno-curso', async (req, res) => {
+    try {
+        const url = "http://localhost/webservice/rest/server.php";
+        const params = {
+            wstoken: 'a7ab7c13eca9c4d87556998dff78a606',
+            wsfunction: 'mod_assign_get_assignments',
+            courseids: [req.query.courseId],
+            moodlewsrestformat: 'json'
+        };
+        // Realizar la solicitud GET utilizando Axios
+        const response = await axios.get(url, {params})
+                .then(function (response) {
+                    const cursoInfo = response.data;
+
+                    res.json(cursoInfo);
                 });
     } catch (error) {
         // Manejar errores
