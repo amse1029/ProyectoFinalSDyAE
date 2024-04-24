@@ -121,7 +121,7 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
         const url = "http://localhost/webservice/rest/server.php";
         const userId = req.query.userId;
         const courseId = req.query.courseId;
-        const token = 'a7ab7c13eca9c4d87556998dff78a606';
+        const token = 'b5905aee33fbbe8a2cb3f613bcec7bbf';
 
         const params = {
             wstoken: token,
@@ -147,17 +147,6 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
         // Aquí puedes agregar cualquier lógica adicional para manejar el error
     }
 });
-
-// Manejador de ruta para todas las demás solicitudes
-app.all('*', (req, res) => {
-    res.status(404).json({mensaje: 'Ruta no encontrada'});
-});
-
-// Iniciar el servidor
-app.listen(PORT, () => {
-    console.log(`Servidor API Gateway escuchando en el puerto ${PORT}`);
-});
-
 
 
 
@@ -285,3 +274,90 @@ app.get('/api/obtener-promedio-alumno', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener el promedio del alumno' });
     }
 });
+
+
+
+
+
+
+
+// parte control escolar x kim
+app.get('/api/consultar-todos-cursos', async (req, res) => {
+    try {
+        const url = "http://localhost/webservice/rest/server.php";
+        const params = {
+            wstoken: 'b5905aee33fbbe8a2cb3f613bcec7bbf',
+            wsfunction: 'core_course_get_courses',
+            moodlewsrestformat: 'json'
+        };
+        // Realizar la solicitud GET utilizando Axios
+        const response = await axios.get(url, {params});
+
+        // Extraer solo los campos id y fullname de cada curso
+        const cursos = response.data.map(curso => ({
+                id: curso.id,
+                fullname: curso.fullname
+            }));
+
+        // Devolver la respuesta JSON solo con los id y fullname de los cursos
+        res.json(cursos);
+    } catch (error) {
+        // Manejar errores
+        console.error("Error al enviar la solicitud:", error);
+        // Aquí puedes agregar cualquier lógica adicional para manejar el error
+    }
+});
+
+
+app.get('/api/consultar-alumnos-por-curso', async (req, res) => {
+    try {
+        const axios = require('axios');
+        const url = "http://localhost/webservice/rest/server.php";
+        const courseId = req.query.courseId;
+        const token = 'b5905aee33fbbe8a2cb3f613bcec7bbf';
+
+        const params = {
+            wstoken: token,
+            wsfunction: 'gradereport_grader_get_users_in_report',
+            moodlewsrestformat: 'json',
+            courseid: courseId
+        };
+
+        // Realizar la solicitud GET utilizando Axios
+        const response = await axios.get(url, {params});
+
+        // Verificar si hay usuarios en la respuesta
+        if (response.data.users) {
+            // Extraer solo los campos id y fullname de cada usuario
+            const alumnos = response.data.users.map(alumno => ({
+                    id: alumno.id,
+                    fullname: alumno.fullname
+                }));
+
+            // Devolver la respuesta JSON solo con los id y fullname de los alumnos
+            res.json(alumnos);
+        } else {
+            // Manejar el caso en que no haya usuarios en la respuesta
+            res.status(404).json({error: 'No se encontraron usuarios en la respuesta'});
+        }
+
+    } catch (error) {
+        // Manejar errores
+        console.error("Error al enviar la solicitud:", error);
+        // Aquí puedes agregar cualquier lógica adicional para manejar el error
+    }
+});
+
+
+// Manejador de ruta para todas las demás solicitudes
+app.all('*', (req, res) => {
+    res.status(404).json({mensaje: 'Ruta no encontrada'});
+});
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`Servidor API Gateway escuchando en el puerto ${PORT}`);
+});
+
+
+
