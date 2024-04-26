@@ -32,7 +32,7 @@ function consultarAlumnosPorCurso() {
 }
 
 function consultarCalificacionesPorAlumnoCurso() {
-    hacerSolicitud('/api/consultar-calificaciones-curso?courseId=3&userId=2');
+    hacerSolicitud('/api/consultar-calificaciones-curso?courseId=2&userId=3');
 }
 
 
