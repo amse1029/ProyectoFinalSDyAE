@@ -125,6 +125,7 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
         const response = await axios.get(url, {params});
 
         let sum = 0;
+        let hasNaN = false;
         // Recorre todas las tablas
         for (const table of response.data.tables) {
             // Recorre los datos de la tabla
@@ -136,16 +137,20 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
                     // Suma el valor al total
                     if (!Number.isNaN(contribution)) {
                         sum += contribution;
-
-
+                    } else {
+                        hasNaN = true;
                     }
                 }
             }
         }
-        const jsonData = {
-            contibucionTotal: sum
-        };
-        res.json(jsonData);
+        if (hasNaN) {
+            // Llamar a la otra función si hay NaN
+            const profesores = await getProfesores(courseId);
+            res.json({contibucionTotal: sum, profesores});
+        } else {
+            const jsonData = {contibucionTotal: sum};
+            res.json(jsonData);
+        }
 
     } catch (error) {
         // Manejar errores
@@ -153,6 +158,27 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
     }
 });
 
+async function getProfesores(courseId) {
+    const url = "http://localhost/webservice/rest/server.php";
+    const params = {
+        wstoken: 'b5905aee33fbbe8a2cb3f613bcec7bbf',
+        wsfunction: 'core_enrol_get_enrolled_users',
+        courseid: courseId,
+        moodlewsrestformat: 'json'
+    };
+
+    const response = await axios.get(url, {params});
+    const cursoInfo = response.data;
+    // Filtrar los maestros y alumnos
+    const maestros = cursoInfo.filter(user => user.roles.some(role => role.shortname === 'editingteacher'));
+    // Extraer solo los campos id y fullname de cada usuario
+    const admins = maestros.map(maestro => ({
+            id: maestro.id,
+            fullname: maestro.fullname
+        }));
+
+    return admins;
+}
 
 
 // parte control escolar x kim
