@@ -107,6 +107,7 @@ app.get('/api/consultar-tareas-alumno-curso', async (req, res) => {
 });
 //
 
+const { getProfesores } = require('./funciones.js');
 app.get('/api/consultar-calificaciones-curso', async (req, res) => {
     try {
         const axios = require('axios');
@@ -158,27 +159,7 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
     }
 });
 
-async function getProfesores(courseId) {
-    const url = "http://localhost/webservice/rest/server.php";
-    const params = {
-        wstoken: 'b5905aee33fbbe8a2cb3f613bcec7bbf',
-        wsfunction: 'core_enrol_get_enrolled_users',
-        courseid: courseId,
-        moodlewsrestformat: 'json'
-    };
 
-    const response = await axios.get(url, {params});
-    const cursoInfo = response.data;
-    // Filtrar los maestros y alumnos
-    const maestros = cursoInfo.filter(user => user.roles.some(role => role.shortname === 'editingteacher'));
-    // Extraer solo los campos id y fullname de cada usuario
-    const admins = maestros.map(maestro => ({
-            id: maestro.id,
-            fullname: maestro.fullname
-        }));
-
-    return admins;
-}
 
 
 // parte control escolar x kim
@@ -206,40 +187,56 @@ app.get('/api/consultar-todos-cursos', async (req, res) => {
     }
 });
 
+const { obtenerIdsCursos } = require('./funciones.js');
+
 app.get('/api/consultar-alumnos-por-curso', async (req, res) => {
     try {
         const axios = require('axios');
         const url = "http://localhost/webservice/rest/server.php";
-        const courseId = req.query.courseId;
         const token = 'b5905aee33fbbe8a2cb3f613bcec7bbf';
-        const params = {
-            wstoken: token,
-            wsfunction: 'gradereport_grader_get_users_in_report',
-            moodlewsrestformat: 'json',
-            courseid: courseId
-        };
-        // Realizar la solicitud GET utilizando Axios
-        const response = await axios.get(url, {params});
-        // Verificar si hay usuarios en la respuesta
-        if (response.data.users) {
-            // Extraer solo los campos id y fullname de cada usuario
-            const alumnos = response.data.users.map(alumno => ({
-                    id: alumno.id,
-                    fullname: alumno.fullname
-                }));
-            // Devolver la respuesta JSON solo con los id y fullname de los alumnos
-            res.json(alumnos);
-        } else {
-            // Manejar el caso en que no haya usuarios en la respuesta
-            res.status(404).json({error: 'No se encontraron usuarios en la respuesta'});
-        }
+        
+        // Obtener todos los IDs de los cursos
+        const idsCursos = await obtenerIdsCursos();
 
+        // Array para almacenar la información de alumnos de todos los cursos con su respectivo courseId
+        let alumnosTodosCursos = [];
+
+        // Para cada curso, realizar la solicitud de consulta de alumnos
+        await Promise.all(idsCursos.map(async (courseId) => {
+            const params = {
+                wstoken: token,
+                wsfunction: 'gradereport_grader_get_users_in_report',
+                moodlewsrestformat: 'json',
+                courseid: courseId
+            };
+
+            // Realizar la solicitud GET utilizando Axios
+            const response = await axios.get(url, {params});
+
+            // Verificar si hay usuarios en la respuesta
+            if (response.data.users) {
+                // Extraer solo los campos id y fullname de cada usuario
+                const alumnosCurso = response.data.users.map(alumno => ({
+                    id: alumno.id,
+                    fullname: alumno.fullname,
+                    courseId: courseId // Agregar el ID del curso al objeto de alumno
+                }));
+                
+                // Agregar la información de los alumnos del curso al array
+                alumnosTodosCursos = alumnosTodosCursos.concat(alumnosCurso);
+            }
+        }));
+
+        // Devolver la respuesta JSON con la información de todos los alumnos de todos los cursos
+        res.json(alumnosTodosCursos);
+        
     } catch (error) {
         // Manejar errores
         console.error("Error al enviar la solicitud:", error);
-        // Aquí puedes agregar cualquier lógica adicional para manejar el error
+        res.status(500).json({error: 'Error al procesar la solicitud'});
     }
 });
+
 
 // Manejador de ruta para todas las demás solicitudes
 app.all('*', (req, res) => {

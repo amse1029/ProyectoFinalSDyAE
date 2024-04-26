@@ -28,7 +28,7 @@ function consultarCursos() {
 }
 
 function consultarAlumnosPorCurso() {
-    hacerSolicitud('/api/consultar-alumnos-por-curso?courseId=2');
+    hacerSolicitud('/api/consultar-alumnos-por-curso');
 }
 
 function consultarCalificacionesPorAlumnoCurso() {
