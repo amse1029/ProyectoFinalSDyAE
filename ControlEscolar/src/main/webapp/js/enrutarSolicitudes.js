@@ -8,7 +8,7 @@ function hacerSolicitud(url) {
     const xhr = new XMLHttpRequest();
     const urlDestino = 'http://localhost:89' + url;
     xhr.open('GET', urlDestino, true);
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === 200) {
                 console.log('Respuesta del servidor:', xhr.responseText);
@@ -17,23 +17,17 @@ function hacerSolicitud(url) {
             }
         }
     };
-    xhr.onerror = function() {
+    xhr.onerror = function () {
         console.error('Error de red al hacer la solicitud');
     };
     xhr.send();
 }
 
-function consultarCursos() {
-    hacerSolicitud('/api/consultar-todos-cursos');
-}
 
 function consultarAlumnosPorCurso() {
-    hacerSolicitud('/api/consultar-alumnos-por-curso');
+    hacerSolicitud('/api/entrega-ctrlEscolar');
 }
 
-function consultarCalificacionesPorAlumnoCurso() {
-    hacerSolicitud('/api/consultar-calificaciones-curso?courseId=2&userId=3');
-}
 
 
 

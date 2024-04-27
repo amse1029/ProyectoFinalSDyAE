@@ -32,6 +32,7 @@ app.get('/api/otra-api', async (req, res) => {
         res.status(500).json({error: 'Error al hacer la solicitud a la otra API'});
     }
 });
+
 app.get('/api/consultar-cursos', async (req, res) => {
     try {
         var url = "http://localhost/webservice/rest/server.php";
@@ -59,6 +60,7 @@ app.get('/api/consultar-cursos', async (req, res) => {
         res.status(500).json({error: 'Error al procesar la solicitud'});
     }
 });
+
 app.get('/api/consultar-profesor-curso', async (req, res) => {
     try {
         const url = "http://localhost/webservice/rest/server.php";
@@ -105,9 +107,10 @@ app.get('/api/consultar-tareas-alumno-curso', async (req, res) => {
         // Aquí puedes agregar cualquier lógica adicional para manejar el error
     }
 });
-//
 
-const {getProfesores} = require('./funciones.js');
+
+//CHECARRRRRR
+//const {getProfesores} = require('./funciones.js');
 app.get('/api/consultar-calificaciones-curso', async (req, res) => {
     try {
         const axios = require('axios');
@@ -144,14 +147,8 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
                 }
             }
         }
-        if (hasNaN) {
-            // Llamar a la otra función si hay NaN
-            const profesores = await getProfesores(courseId);
-            res.json({contibucionTotal: sum, profesores});
-        } else {
-            const jsonData = {contibucionTotal: sum};
-            res.json(jsonData);
-        }
+        const jsonData = {contibucionTotal: sum};
+        res.json(jsonData);
 
     } catch (error) {
         // Manejar errores
@@ -159,125 +156,6 @@ app.get('/api/consultar-calificaciones-curso', async (req, res) => {
     }
 });
 
-
-
-
-// parte control escolar x kim
-app.get('/api/consultar-todos-cursos', async (req, res) => {
-    try {
-        const url = "http://localhost/webservice/rest/server.php";
-        const params = {
-            wstoken: 'b5905aee33fbbe8a2cb3f613bcec7bbf',
-            wsfunction: 'core_course_get_courses',
-            moodlewsrestformat: 'json'
-        };
-        // Realizar la solicitud GET utilizando Axios
-        const response = await axios.get(url, {params});
-        // Extraer solo los campos id y fullname de cada curso
-        const cursos = response.data.map(curso => ({
-                id: curso.id,
-                fullname: curso.fullname
-            }));
-        // Devolver la respuesta JSON solo con los id y fullname de los cursos
-        res.json(cursos);
-    } catch (error) {
-        // Manejar errores
-        console.error("Error al enviar la solicitud:", error);
-        // Aquí puedes agregar cualquier lógica adicional para manejar el error
-    }
-});
-
-const {obtenerIdsCursos} = require('./funciones.js');
-
-app.get('/api/consultar-alumnos-por-curso', async (req, res) => {
-    try {
-        const axios = require('axios');
-        const url = "http://localhost/webservice/rest/server.php";
-        const token = 'b5905aee33fbbe8a2cb3f613bcec7bbf';
-
-        // Obtener todos los IDs de los cursos
-        const idsCursos = await obtenerIdsCursos();
-
-        // Array para almacenar la información de alumnos de todos los cursos con su respectivo courseId
-        let alumnosTodosCursos = [];
-
-        // Para cada curso, realizar la solicitud de consulta de alumnos y calificaciones
-        await Promise.all(idsCursos.map(async (courseId) => {
-            const paramsAlumnos = {
-                wstoken: token,
-                wsfunction: 'gradereport_grader_get_users_in_report',
-                moodlewsrestformat: 'json',
-                courseid: courseId
-            };
-
-            // Realizar la solicitud GET para obtener los alumnos utilizando Axios
-            const responseAlumnos = await axios.get(url, {params: paramsAlumnos});
-
-            // Verificar si hay usuarios en la respuesta
-            if (responseAlumnos.data.users) {
-                // Extraer solo los campos id y fullname de cada usuario
-                const alumnosCurso = responseAlumnos.data.users.map(alumno => ({
-                        id: alumno.id,
-                        fullname: alumno.fullname,
-                        courseId: courseId // Agregar el ID del curso al objeto de alumno
-                    }));
-
-                // Agregar la información de los alumnos del curso al array
-                alumnosTodosCursos = alumnosTodosCursos.concat(alumnosCurso);
-
-                // Para cada alumno en el curso, obtener sus calificaciones
-                await Promise.all(alumnosCurso.map(async (alumno) => {
-                    const paramsCalificaciones = {
-                        wstoken: token,
-                        wsfunction: 'gradereport_user_get_grades_table',
-                        moodlewsrestformat: 'json',
-                        userid: alumno.id,
-                        courseid: courseId
-                    };
-
-                    // Realizar la solicitud GET para obtener las calificaciones del alumno utilizando Axios
-                    const responseCalificaciones = await axios.get(url, {params: paramsCalificaciones});
-
-                    // Calcular la suma de las calificaciones del alumno
-                    let sum = 0;
-                    let hasNaN = false;
-                    for (const table of responseCalificaciones.data.tables) {
-                        for (const data of table.tabledata) {
-                            if (data.contributiontocoursetotal) {
-                                const contribution = parseFloat(data.contributiontocoursetotal.content);
-                                if (!Number.isNaN(contribution)) {
-                                    sum += contribution;
-                                } else {
-                                    hasNaN = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (hasNaN) {
-                        // Llamar a la otra función si hay NaN
-                        const profesores = await getProfesores(courseId);
-                        profesores.forEach(profesor => {
-                            alumnosTodosCursos.push({NoCalifico: profesor.fullname, Curso: courseId});
-                        });
-                    }
-
-
-                    // Agregar las calificaciones al objeto del alumno
-                    alumno.calificaciones = sum;
-                }));
-            }
-        }));
-
-        // Devolver la respuesta JSON con la información de todos los alumnos de todos los cursos
-        res.json(alumnosTodosCursos);
-
-    } catch (error) {
-        // Manejar errores
-        console.error("Error al enviar la solicitud:", error);
-        res.status(500).json({error: 'Error al procesar la solicitud'});
-    }
-});
 
 
 // Manejador de ruta para todas las demás solicitudes
