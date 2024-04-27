@@ -11,10 +11,13 @@
     "author": "COMPUTOCKS",
     "contributors": [],
     "dependencies": {
+        "amqplib": "^0.10.4",
+        "body-parser": "^1.20.2",
         "cors": "^2.8.5",
         "express": "^4.19.2",
         "http-proxy-middleware": "^3.0.0",
         "socket.io": "^4.7.5",
-        "sqlite3": "^5.1.7"
+        "sqlite3": "^5.1.7",
+        "ws": "^8.16.0"
     }
 }

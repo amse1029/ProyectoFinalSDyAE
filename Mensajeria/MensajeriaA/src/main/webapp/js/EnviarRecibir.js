@@ -1,19 +1,34 @@
-   const ws = new WebSocket('ws://localhost:8081');
-        const chatDiv = document.getElementById('chat');
+ const ws = new WebSocket('ws://localhost:3002');
 
-        ws.addEventListener('message', function (event) {
-            const message = JSON.parse(event.data);
-            chatDiv.innerHTML += `<p><strong>${message.username}:</strong> ${message.content}</p>`;
-        });
+        ws.onopen = () => {
+            console.log('Conexión WebSocket abierta');
+        };
 
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const messageContent = messageInput.value;
-            const message = {
-                username: 'Maestro',
-                content: messageContent
-            };
-            chatDiv.innerHTML += `<p><strong>${message.username}:</strong> ${message.content}</p>`;
-            ws.send(JSON.stringify(message));
-            messageInput.value = '';
+        ws.onmessage = (event) => {
+            console.log('Mensaje recibido:', event.data);
+            // Manejar el mensaje recibido del servidor
+            document.getElementById('mensajes').innerText += event.data + '\n';
+        };
+        
+        
+// Función para enviar mensajes (productor)
+async function enviarMensaje() {
+    document.getElementById('btnEnviar').addEventListener('click', async () => {
+        try {
+            
+            const mensaje = document.getElementById('messageInput').value;
+            const response = await fetch('http://localhost:3001/enviar-mensaje', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({mensaje: mensaje})
+            });
+            const data = await response.text();
+            console.log(data); // Mensaje enviado correctamente
+        } catch (error) {
+            console.error('Error al enviar mensaje:', error);
         }
+    });
+}
+

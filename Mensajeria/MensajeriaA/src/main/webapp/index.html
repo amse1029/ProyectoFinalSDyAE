@@ -1,18 +1,21 @@
 <!-- Cliente 1 -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Client</title>
-</head>
-<body>
-    <h1>Padre</h1>
-    <div id="chat"></div>
-    <input type="text" id="messageInput" placeholder="Escribe un mensaje">
-    <button onclick="sendMessage()">Enviar</button>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WebSocket Client</title>
+    </head>
+    <body>
+        <h1>Padre</h1>
+        <div id="chat"></div>
+        <input type="text" id="messageInput" placeholder="Escribe un mensaje">
+        <input type="text" id="colaInput" placeholder="Escribe tu cola">
+        <input type="text" id="colaRecibirInput" placeholder="Escribe tu cola a recibir">
+        <button onclick="enviarMensaje()" id="btnEnviar">Enviar</button>
+        <button onclick="recibirCola()" id="btnEnviarColaRecibir">Enviar Cola Recibir</button>
 
-      <script src="js/EnviarRecibir.js"> </script>
-
-</body>
+        <script src="js/EnviarRecibir.js"></script>
+        <div id="mensajes"></div>
+    </body>
 </html>

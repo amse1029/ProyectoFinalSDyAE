@@ -1,50 +1,75 @@
+const express = require('express');
+const app = express();
+const amqp = require('amqplib');
+const PORT = 3001;
+const bodyParser = require('body-parser');
+
 const WebSocket = require('ws');
-const sqlite3 = require('sqlite3').verbose(); // Importar el módulo SQLite3
-const db = new sqlite3.Database(':memory:'); // Conectar a una base de datos en memoria
 
-// Crear la tabla para almacenar los mensajes
-db.run('CREATE TABLE IF NOT EXISTS messages (username TEXT, content TEXT)');
 
-const wss = new WebSocket.Server({ port: 8081 });
+const rabbitmqUrl = 'amqp://localhost';
+const queueName = 'mi_cola';
 
-wss.on('connection', function connection(ws) {
-    console.log('Cliente conectado');
+// Configurar el middleware para analizar el cuerpo de las solicitudes como JSON
+app.use(bodyParser.json());
 
-    ws.on('message', function incoming(message) {
-        console.log('Mensaje recibido: %s', message);
-        
-        const parsedMessage = JSON.parse(message);
-        const username = parsedMessage.username;
-        const content = parsedMessage.content;
-        
-        // Reenviar el mensaje a todos los demás clientes
-        wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                const outgoingMessage = {
-                    username: username,
-                    content: content
-                };
-                client.send(JSON.stringify(outgoingMessage));
-            }
-        });
+// Establecer cabeceras para permitir solicitudes CORS desde cualquier origen
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
 
-        // Guardar el mensaje en la base de datos
-        db.run('INSERT INTO messages (username, content) VALUES (?, ?)', [username, content]);
-    });
+// Manejar las solicitudes POST a '/enviar-mensaje'
+app.post('/enviar-mensaje', async (req, res) => {
+    try {
+        // Obtener el mensaje del cuerpo de la solicitud
+        const mensaje = req.body.mensaje;
+        // Conectar a RabbitMQ
+        const connection = await amqp.connect(rabbitmqUrl);
+        const channel = await connection.createChannel();
+        // Declarar una cola
+        await channel.assertQueue(queueName);
+        // Enviar el mensaje a la cola
+        await channel.sendToQueue(queueName, Buffer.from(mensaje));
+        console.log('Mensaje enviado a la cola:', mensaje);
+        // Cerrar la conexión
+        await channel.close();
+        await connection.close();
+        // Responder con un mensaje de éxito
+        res.status(200).send('Mensaje enviado correctamente');
+    } catch (error) {
+        console.error('Error al enviar mensaje:', error);
+        // Responder con un mensaje de error
+        res.status(500).send('Error al enviar mensaje');
+    }
+});
 
-    ws.on('close', function close() {
-        console.log('Cliente desconectado');
-    });
+// Iniciar un servidor WebSocket
+const wss = new WebSocket.Server({ port: 3002 });
 
-    // Cuando un cliente se reconecta, enviarle los mensajes almacenados
-    db.all('SELECT * FROM messages', function(err, rows) {
-        if (err) {
-            console.error('Error al obtener mensajes almacenados:', err);
-            return;
-        }
+// Manejar conexiones WebSocket
+wss.on('connection', (ws) => {
+    console.log('Cliente conectado al WebSocket');
 
-        rows.forEach(function(row) {
-            ws.send(JSON.stringify(row));
-        });
-    });
+    // Suscribirse a la cola de RabbitMQ y enviar mensajes al cliente
+    async function recibirMensajesRabbitMQ() {
+        const connection = await amqp.connect(rabbitmqUrl);
+        const channel = await connection.createChannel();
+        await channel.assertQueue(queueName);
+        channel.consume(queueName, (mensaje) => {
+            ws.send(mensaje.content.toString());
+            console.log('Mensaje recibido de RabbitMQ:', mensaje.content.toString());
+        }, { noAck: true });
+    }
+
+    recibirMensajesRabbitMQ().catch(error => console.error('Error al recibir mensajes de RabbitMQ:', error));
+});
+
+
+
+
+app.listen(PORT, async () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
