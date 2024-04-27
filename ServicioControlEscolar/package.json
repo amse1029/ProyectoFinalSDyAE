@@ -1,0 +1,17 @@
+{
+    "name": "ServicioControlEscolar",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "COMPUTOCKS",
+    "contributors": [],
+    "dependencies": {
+        "axios": "^1.6.8",
+        "express": "^4.19.2"
+    }
+}
